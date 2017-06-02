@@ -1,0 +1,12 @@
+{
+  "imageA": {
+    "url": "http://3E280.http.dal05.cdn.softlayer.net/want-content-production/images/50837.?1495057775",
+    "options": { }
+  },
+  "imageB": {
+    "url": "https://api.qrserver.com/v1/create-qr-code/?&color=fff&bgcolor=663abc&margin=17&data=12345678",
+    "options": {
+      "gravity": ["SouthEast"]
+    }
+  }
+}

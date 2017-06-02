@@ -1,0 +1,9 @@
+version: '3.0'
+
+services:
+  app:
+    build: .
+    ports:
+      - '85:80'
+    volumes:
+      - './:/app'
