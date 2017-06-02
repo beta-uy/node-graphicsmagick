@@ -5,8 +5,9 @@
   },
   "imageB": {
     "url": "https://api.qrserver.com/v1/create-qr-code/?&color=fff&bgcolor=663abc&margin=17&data=12345678",
-    "options": {
-      "gravity": ["SouthEast"]
-    }
+    "options": { }
+  },
+  "options": {
+    "gravity": ["SouthEast"]
   }
 }

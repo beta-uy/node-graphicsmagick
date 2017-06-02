@@ -7,3 +7,4 @@ services:
       - '85:80'
     volumes:
       - './:/app'
+    command: node_modules/.bin/nodemon /app/index.js

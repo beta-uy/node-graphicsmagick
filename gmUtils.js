@@ -11,34 +11,41 @@ var gmFromRemoteUrl = url => gm(request(url));
     },
     "imageB": {
       "url": "https://...",
-      "options": {
-        "gravity": ["SouthEast"]
-      }
+      "options": { }
+    },
+    "options": {
+      "gravity": ["SouthEast"]
     }
   }
 */
-var composite = (options = {}) => new Promise((resolve, reject) => {
-  console.log(options);
+var composite = (params = {}) => new Promise((resolve, reject) => {
+  // console.log(params);
 
-  var imageA = options.imageA;
-  var imageB = options.imageB;
+  var imageA = params.imageA;
+  var imageB = params.imageB;
 
-  var gmFromJsonRepresentation = image =>
-    Object.entries(image.options)
-          .reduce(
-            (acc, [utility, args]) => acc[utility](...args),
-            gmFromRemoteUrl(image.url)
-          );
+  var addOptions = (options, gmImage) =>
+    Object.entries(options)
+          .reduce((acc, [utility, args]) => acc[utility](...args), gmImage);
 
-  var gmA = gmFromJsonRepresentation(imageA);
-  var gmB = gmFromJsonRepresentation(imageB);
+  var gmA = addOptions(imageA.options, gmFromRemoteUrl(imageA.url));
+  var gmB = addOptions(imageB.options, gmFromRemoteUrl(imageB.url));
 
-  var result = gmA.composite(gmB);
+  var result = addOptions(params.options, gmA.composite(gmB));
+  // var result = gm().command('composite')
+  //                  .in('-gravity', 'SouthEast')
+  //                  .in(gmA)
+  //                  .in(gmB);
 
-  result.toBuffer('jpg', (err, buffer) => {
+  result.toBuffer('PNG', (err, buffer) => {
     if (err) return reject(err);
     resolve(buffer);
   });
+
+  // result.stream((err, outputStream, errorStream) => {
+  //   // if (errorStream) return reject(errorStream);
+  //   resolve(outputStream);
+  // });
 });
 
 module.exports = {

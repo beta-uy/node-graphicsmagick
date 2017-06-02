@@ -13,5 +13,8 @@
     "express": "^4.15.3",
     "gm": "^1.23.0",
     "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }

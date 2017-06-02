@@ -11,8 +11,18 @@ app.use(bodyParser.json());
     -H 'Content-Type: application/json'
 */
 app.post('/gm/composite', (req, res) => {
-  gmUtils.composite(req.body).then(req.send);
+  gmUtils.composite(req.body)
+    .then(
+      // outputStream => { outputStream.pipe(res); outputStream.on('end', () => res.end()) },
+      req.send,
+      err => { res.status(500); res.send(err.message); }
+    );
 });
 
 app.listen(80);
 console.log("Listening on port 80");
+
+process.on('SIGTERM', function() {
+  console.log("Bye!");
+  process.exit();
+});
