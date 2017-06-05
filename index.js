@@ -13,9 +13,9 @@ app.use(bodyParser.json());
 app.post('/gm/composite', (req, res) => {
   gmUtils.composite(req.body)
     .then(
-      // outputStream => { outputStream.pipe(res); outputStream.on('end', () => res.end()) },
-      req.send,
-      err => { res.status(500); res.send(err.message); }
+      // req.send, // buffer flavour
+      outputStream => { outputStream.pipe(res); }, // stream flavour
+      errorStream => { res.status(500); errorStream.pipe(res); }
     );
 });
 

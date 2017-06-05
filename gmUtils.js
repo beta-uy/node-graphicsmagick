@@ -1,7 +1,6 @@
+// var fs = require('fs');
+// var request = require('request');
 var gm = require('gm');
-var request = require('request');
-
-var gmFromRemoteUrl = url => gm(request(url));
 
 /*
   {
@@ -14,38 +13,47 @@ var gmFromRemoteUrl = url => gm(request(url));
       "options": { }
     },
     "options": {
-      "gravity": ["SouthEast"]
+      "gravity": "SouthEast"
     }
   }
 */
 var composite = (params = {}) => new Promise((resolve, reject) => {
-  // console.log(params);
+  // TODO https support
 
   var imageA = params.imageA;
   var imageB = params.imageB;
 
-  var addOptions = (options, gmImage) =>
-    Object.entries(options)
-          .reduce((acc, [utility, args]) => acc[utility](...args), gmImage);
+  // var addOptions = (options, gmImage) =>
+  //   Object.entries(options)
+  //         .reduce((acc, [utility, args]) => acc[utility](...args), gmImage);
 
-  var gmA = addOptions(imageA.options, gmFromRemoteUrl(imageA.url));
-  var gmB = addOptions(imageB.options, gmFromRemoteUrl(imageB.url));
+  // var gmA = addOptions(imageA.options, gmFromRemoteUrl(imageA.url));
+  // var gmB = addOptions(imageB.options, gmFromRemoteUrl(imageB.url));
 
-  var result = addOptions(params.options, gmA.composite(gmB));
-  // var result = gm().command('composite')
-  //                  .in('-gravity', 'SouthEast')
-  //                  .in(gmA)
-  //                  .in(gmB);
+  // var result = addOptions(params.options, gmA.composite(gmB));
+  
+  var serializeOptions = options => 
+    Object.entries(options).reduce((acc, [k, v]) => [...acc, `-${k}`, v], []);
+    
+  var imageWithOptions = ({ options, url }) => [ url, ...serializeOptions(options) ];
 
-  result.toBuffer('PNG', (err, buffer) => {
-    if (err) return reject(err);
-    resolve(buffer);
-  });
 
-  // result.stream((err, outputStream, errorStream) => {
-  //   // if (errorStream) return reject(errorStream);
-  //   resolve(outputStream);
+  var result = gm().command('composite')
+                   .in(...serializeOptions(params.options))
+                   .in(...imageWithOptions(imageA))
+                   .in(...imageWithOptions(imageB));
+
+  // // buffer flavour
+  // result.toBuffer((err, buffer) => {
+  //   if (err) return reject(err);
+  //   resolve(buffer);
   // });
+
+  // stream flavour
+  result.stream((err, outputStream, errorStream) => {
+    if (err) return reject(errorStream);
+    resolve(outputStream);
+  });
 });
 
 module.exports = {
