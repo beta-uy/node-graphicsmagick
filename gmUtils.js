@@ -17,6 +17,9 @@ var gm = require('gm');
     }
   }
 */
+
+var compact = xs => xs.filter(x => !!x);
+
 var composite = (params = {}) => new Promise((resolve, reject) => {
   // TODO https support
 
@@ -33,9 +36,9 @@ var composite = (params = {}) => new Promise((resolve, reject) => {
   // var result = addOptions(params.options, gmA.composite(gmB));
   
   var serializeOptions = options => 
-    Object.entries(options).reduce((acc, [k, v]) => [...acc, `-${k}`, v], []);
+    Object.entries(options || {}).reduce((acc, [k, v]) => [...acc, `-${k}`, v], []);
     
-  var imageWithOptions = ({ options, url }) => [ url, ...serializeOptions(options) ];
+  var imageWithOptions = ({ options, url }) => compact([ url, ...serializeOptions(options) ]);
 
 
   var result = gm().command('composite')

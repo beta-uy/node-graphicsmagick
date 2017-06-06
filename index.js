@@ -14,7 +14,7 @@ app.post('/gm/composite', (req, res) => {
   gmUtils.composite(req.body)
     .then(
       // req.send, // buffer flavour
-      outputStream => { outputStream.pipe(res); }, // stream flavour
+      outputStream => { outputStream.pipe(res); res.setHeader('Content-Type', 'image') }, // stream flavour
       errorStream => { res.status(500); errorStream.pipe(res); }
     );
 });
