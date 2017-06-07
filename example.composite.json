@@ -5,7 +5,9 @@
   },
   "imageB": {
     "url": "http://3E280.http.dal05.cdn.softlayer.net/want-content-production/images/50837.?1495057775",
-    "options": { }
+    "options": {
+      "resize": "1080x1080>"
+    }
   },
   "options": {
     "gravity": "SouthEast"
