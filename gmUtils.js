@@ -55,7 +55,10 @@ var composite = (params = {}) => new Promise((resolve, reject) => {
           resolve(outputStream);
         });
       },
-      error => console.err(error.message));
+      error => {
+        console.error(error.message)
+        reject(error)
+      });
 });
 
 module.exports = {
