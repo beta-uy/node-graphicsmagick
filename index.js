@@ -10,14 +10,17 @@ app.use(bodyParser.json());
     -d "$(cat example.composite.json | sed s/\"/\\\"/g)" \
     -H 'Content-Type: application/json'
 */
-app.post('/gm/composite', (req, res) => {
-  gmUtils.composite(req.body)
-    .then(
-      // req.send, // buffer flavour
-      outputStream => { outputStream.pipe(res); res.setHeader('Content-Type', 'image') }, // stream flavour
-      errorStream => { res.status(500); errorStream.pipe(res); }
-    );
-});
+app.post('/gm/composite', (req, res) =>
+  gmUtils.composite(req.body).then(
+    outputStream => {
+      res.setHeader('Content-Type', 'image');
+      outputStream.pipe(res);
+    },
+    error => {
+      res.status(500);
+      res.send(error.message);
+    }
+  ));
 
 app.listen(80);
 console.log("Listening on port 80");

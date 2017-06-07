@@ -1,6 +1,6 @@
 FROM mhart/alpine-node:8
 
-RUN apk --update add graphicsmagick && rm -rf /var/cache/apk/*
+RUN apk --update add graphicsmagick ca-certificates && update-ca-certificates && rm -rf /var/cache/apk/*
 
 RUN mkdir /app
 WORKDIR /app

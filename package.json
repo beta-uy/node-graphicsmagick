@@ -9,10 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "gm": "^1.23.0",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "tmp": "^0.0.31"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

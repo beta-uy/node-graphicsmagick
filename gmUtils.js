@@ -1,6 +1,8 @@
-// var fs = require('fs');
-// var request = require('request');
+var fs = require('fs');
 var gm = require('gm');
+var request = require('request');
+var tmp = require('tmp');
+var Promise = require('bluebird');
 
 /*
   {
@@ -20,43 +22,40 @@ var gm = require('gm');
 
 var compact = xs => xs.filter(x => !!x);
 
+var downloadImage = url => new Promise((resolve, reject) => {
+  tmp.file((tmpError, path, fd, cleanup) => {
+    if (tmpError) return reject(tmpError);
+
+    var response = request(url);
+    response.pipe(fs.createWriteStream(path));
+    response.on('end', () => resolve(path));
+    response.on('error', reject);
+  });
+});
+
 var composite = (params = {}) => new Promise((resolve, reject) => {
-  // TODO https support
+  console.log(params)
 
-  var imageA = params.imageA;
-  var imageB = params.imageB;
-
-  // var addOptions = (options, gmImage) =>
-  //   Object.entries(options)
-  //         .reduce((acc, [utility, args]) => acc[utility](...args), gmImage);
-
-  // var gmA = addOptions(imageA.options, gmFromRemoteUrl(imageA.url));
-  // var gmB = addOptions(imageB.options, gmFromRemoteUrl(imageB.url));
-
-  // var result = addOptions(params.options, gmA.composite(gmB));
-  
   var serializeOptions = options => 
     Object.entries(options || {}).reduce((acc, [k, v]) => [...acc, `-${k}`, v], []);
     
-  var imageWithOptions = ({ options, url }) => compact([ url, ...serializeOptions(options) ]);
+  var imageWithOptions = ({ options, url }) => 
+    downloadImage(url).then(path => compact([ path, ...serializeOptions(options) ]));
 
+  Promise.all([params.imageA, params.imageB].map(imageWithOptions))
+    .then(
+      ([ imageA, imageB ]) => {
+        var result = gm().command('composite')
+                         .in(...serializeOptions(params.options))
+                         .in(...imageA)
+                         .in(...imageB);
 
-  var result = gm().command('composite')
-                   .in(...serializeOptions(params.options))
-                   .in(...imageWithOptions(imageA))
-                   .in(...imageWithOptions(imageB));
-
-  // // buffer flavour
-  // result.toBuffer((err, buffer) => {
-  //   if (err) return reject(err);
-  //   resolve(buffer);
-  // });
-
-  // stream flavour
-  result.stream((err, outputStream, errorStream) => {
-    if (err) return reject(errorStream);
-    resolve(outputStream);
-  });
+        result.stream((err, outputStream, _) => {
+          if (err) return reject(err);
+          resolve(outputStream);
+        });
+      },
+      error => console.err(error.message));
 });
 
 module.exports = {
