@@ -11,7 +11,7 @@ app.use(bodyParser.json());
     -H 'Content-Type: application/json'
 */
 app.post('/gm/composite', (req, res) =>
-  gmUtils.composite(req.body).then(
+  gmUtils.composite()(req.body).then(
     outputStream => {
       res.setHeader('Content-Type', 'image');
       outputStream.pipe(res);
@@ -38,7 +38,8 @@ app.post('/gm/pipe', (req, res) => {
     outputStream => {
       res.setHeader('Content-Type', 'image');
       outputStream.pipe(res);
-    },
+    }
+  ).catch(
     error => {
       res.status(500);
       res.send(error.message);
