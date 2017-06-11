@@ -50,7 +50,7 @@ var imageWithOptions = (context = {}) => ({ options, url: imageUrl = '' }) => {
   } else if (isUrlRemote(imageUrl)) {
     getImagePath = downloadImage(imageUrl);
   }
-  return getImagePath.then(path => compact([ path, ...commandifyOptions(options) ]));
+  return getImagePath.then(path => compact([ ...commandifyOptions(options), path ]));
 }
 
 /*
