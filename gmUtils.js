@@ -71,6 +71,8 @@ var imageWithOptions = (context = {}) => ({ options, url: imageUrl = '' }) => {
 var composite = (context = {}) => (params = {}) => new Promise((resolve, reject) => {
   Promise.all([params.imageA, params.imageB].map(imageWithOptions(context))).then(
     ([ imageA, imageB ]) => {
+      // gm.composite only supports paths for now
+      // See https://github.com/aheckmann/gm/blame/c6a6c5a18a65e9b9344955a5cf9d7417db25dff3/README.md#L587
       var result = gm().command('composite')
                        .in(...commandifyOptions(params.options))
                        .in(...imageA)
@@ -95,7 +97,18 @@ var convert = (context = {}) => (params = {}) =>
     }
   );
 
+var drawText = (context = {}) => (params = {}) => {
+  var options = params.options || {};
+
+  return gm(1080, 100, '#FFF').transparent('#FFF')
+    .fill(options.fill) // srsly? https://stackoverflow.com/a/28701493
+    .drawText(0, 0, params.text || '', options.gravity || "East")
+    .font(options.font || 'Helvetica', options.fontSize || 72)
+    .trim().stream('png');
+}
+
 module.exports = {
   composite,
-  convert
+  convert,
+  drawText,
 };
