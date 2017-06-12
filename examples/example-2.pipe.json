@@ -1,0 +1,53 @@
+{
+  "pipe": [
+    {
+      "utility": "drawText",
+      "text": "Seems to me this is not resizing",
+      "options": {
+        "fill": "#9CACA3"
+      }
+    },
+    {
+      "utility": "composite",
+      "imageA": {
+        "url": "$_",
+        "options": {
+          "resize": "528x102"
+        }
+      },
+      "imageB": {
+        "url": "/app/examples/assets/profile_post_media.template.png",
+        "options": {
+        }
+      },
+      "options": {
+        "gravity": "Center",
+        "geometry": "+0+211"
+      }
+    },
+    {
+      "utility": "composite",
+      "imageA": {
+        "url": "/app/profile.jpeg",
+        "options": {
+          "resize": "265x265"
+        }
+      },
+      "imageB": {
+        "url": "$_",
+        "options": {
+        }
+      },
+      "mask": {
+        "url": "/app/examples/assets/profile_post_media.mask-2.png",
+        "options": {
+          "resize": "265x265"
+        }
+      },
+      "options": {
+        "gravity": "Center",
+        "geometry": "-1-21"
+      }
+    }
+  ]
+}
