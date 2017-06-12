@@ -9,7 +9,7 @@ var compact = xs => xs.filter(x => !!x);
 
 var isUrlRemote = urlString => {
   var parsedUrl = url.parse(urlString);
-  return parsedUrl && !!parsedUrl.protocol.match(/https?:/);
+  return parsedUrl && parsedUrl.protocol && !!parsedUrl.protocol.match(/https?:/);
 }
 
 var commandifyOptions = options => 
