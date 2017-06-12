@@ -9,6 +9,7 @@
     },
     {
       "utility": "composite",
+      "ref": "$0",
       "imageA": {
         "url": "$_",
         "options": {
@@ -27,26 +28,37 @@
     },
     {
       "utility": "composite",
+      "ref": "$1",
       "imageA": {
         "url": "/app/profile.jpeg",
         "options": {
-          "resize": "265x265"
+          "resize": "265x265^"
         }
       },
       "imageB": {
-        "url": "$_",
+        "url": "/app/examples/assets/canvas.png",
         "options": {
-        }
-      },
-      "mask": {
-        "url": "/app/examples/assets/profile_post_media.mask-2.png",
-        "options": {
-          "resize": "265x265"
         }
       },
       "options": {
-        "gravity": "Center",
-        "geometry": "-1-21"
+        "geometry": "+0-21",
+        "gravity": "Center"
+      }
+    },
+    {
+      "utility": "composite",
+      "imageA": {
+        "url": "$0",
+        "options": {
+        }
+      },
+      "imageB": {
+        "url": "$1",
+        "options": {
+        }
+      },
+      "options": {
+        "gravity": "Center"
       }
     }
   ]
