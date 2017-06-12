@@ -5,7 +5,7 @@ var Promise = require('bluebird');
 
 app.use(bodyParser.json());
 
-/* 
+/*
   curl localhost:85/gm/composite \
     -d "$(cat example.composite.json | sed s/\"/\\\"/g)" \
     -H 'Content-Type: application/json'
@@ -29,13 +29,21 @@ app.post('/gm/composite', (req, res) =>
 */
 app.post('/gm/pipe', (req, res) => {
   var pipe = req.body.pipe || [];
+  var context = {};
 
   Promise.reduce(
     pipe,
-    (inputStream, action) => gmUtils[action.utility]({ inputStream })(action),
-    Promise.resolve(null)
+    ({ ref: prevRef, outputStream: prevStream }, action) => {
+      context[prevRef || "$_"] = prevStream;
+      return gmUtils[action.utility](context)(action)
+        .then(outputStream => ({
+          ref: action.ref,
+          outputStream
+        }));
+    },
+    Promise.resolve(context)
   ).then(
-    outputStream => {
+    ({ outputStream }) => {
       res.setHeader('Content-Type', 'image');
       outputStream.pipe(res);
     }

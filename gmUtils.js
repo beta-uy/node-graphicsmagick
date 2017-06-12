@@ -45,8 +45,8 @@ var dumpStreamToTmpFile = stream =>
   
 var imageWithOptions = (context = {}) => ({ options, url: imageUrl = '' }) => {
   var getImagePath = Promise.resolve(imageUrl);
-  if (imageUrl === "$_") {
-    getImagePath = dumpStreamToTmpFile(context.inputStream);
+  if (imageUrl.startsWith("$")) {
+    getImagePath = dumpStreamToTmpFile(context[imageUrl]);
   } else if (isUrlRemote(imageUrl)) {
     getImagePath = downloadImage(imageUrl);
   }
@@ -87,7 +87,7 @@ var composite = (context = {}) => (params = {}) => new Promise((resolve, reject)
       });
     },
     error => {
-      console.error(error.message)
+      console.error(error)
       reject(error)
     }
   );
@@ -103,11 +103,13 @@ var convert = (context = {}) => (params = {}) =>
 var drawText = (context = {}) => (params = {}) => {
   var options = params.options || {};
 
-  return gm(1080, 100, '#FFF').transparent('#FFF')
-    .fill(options.fill) // srsly? https://stackoverflow.com/a/28701493
-    .drawText(0, 0, params.text || '', options.gravity || "East")
-    .font(options.font || 'Helvetica', options.fontSize || 72)
-    .trim().stream('png');
+  return Promise.resolve(
+    gm(1080, 100, '#FFF').transparent('#FFF')
+      .fill(options.fill) // srsly? https://stackoverflow.com/a/28701493
+      .drawText(0, 0, params.text || '', options.gravity || "East")
+      .font(options.font || 'Helvetica', options.fontSize || 72)
+      .trim().stream('png')
+  );
 }
 
 module.exports = {
