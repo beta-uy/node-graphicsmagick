@@ -69,14 +69,17 @@ var imageWithOptions = (context = {}) => ({ options, url: imageUrl = '' }) => {
   }
 */
 var composite = (context = {}) => (params = {}) => new Promise((resolve, reject) => {
-  Promise.all([params.imageA, params.imageB].map(imageWithOptions(context))).then(
-    ([ imageA, imageB ]) => {
+  Promise.all([
+    params.imageA, params.imageB, params.mask || {}
+  ].map(imageWithOptions(context))).then(
+    ([ imageA, imageB, mask ]) => {
       // gm.composite only supports paths for now
       // See https://github.com/aheckmann/gm/blame/c6a6c5a18a65e9b9344955a5cf9d7417db25dff3/README.md#L587
       var result = gm().command('composite')
-                       .in(...commandifyOptions(params.options))
                        .in(...imageA)
-                       .in(...imageB);
+                       .in(...imageB)
+                       .in(...mask)
+                       .in(...commandifyOptions(params.options));
 
       result.stream((err, outputStream, _) => {
         if (err) return reject(err);
