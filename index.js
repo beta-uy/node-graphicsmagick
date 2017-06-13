@@ -1,9 +1,11 @@
 var app = require('express')();
 var bodyParser = require('body-parser');
-var gmUtils = require('./gmUtils.js')
+var gmUtils = require('./gmUtils.js');
+var addRequestId = require('express-request-id')();
 var Promise = require('bluebird');
 
 app.use(bodyParser.json());
+app.use(addRequestId);
 
 /*
   curl localhost:85/gm/composite \
@@ -28,6 +30,9 @@ app.post('/gm/composite', (req, res) =>
     -H 'Content-Type: application/json'
 */
 app.post('/gm/pipe', (req, res) => {
+  var requestName = `[${req.id}] /gm/pipe "${req.body.operationName || 'Anonymous'}"`;
+  console.time(requestName);
+
   var pipe = req.body.pipe || [];
   var context = {};
 
@@ -52,7 +57,7 @@ app.post('/gm/pipe', (req, res) => {
       res.status(500);
       res.send(error.message);
     }
-  );
+  ).then(() => console.timeEnd(requestName));
 });
 
 app.listen(80);
