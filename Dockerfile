@@ -59,4 +59,6 @@ RUN yarn
 
 COPY . /app
 
-CMD ["node", "/app/index.js"]
+RUN yarn run build
+
+CMD ["node", "/app/build/index.js"]

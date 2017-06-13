@@ -1,3 +1,4 @@
+//@flow
 var fs = require('fs');
 var gm = require('gm');
 var request = require('request');
@@ -12,7 +13,7 @@ var isUrlRemote = urlString => {
   return parsedUrl && parsedUrl.protocol && !!parsedUrl.protocol.match(/https?:/);
 }
 
-var commandifyOptions = options => 
+var commandifyOptions = options =>
   Object.entries(options || {}).reduce((acc, [k, v]) => [...acc, `-${k}`, v], []);
 
 var getTmpFilePath = () =>
@@ -23,7 +24,7 @@ var getTmpFilePath = () =>
     });
   });
 
-var downloadImage = url => 
+var downloadImage = url =>
   getTmpFilePath().then(
     path => new Promise((resolve, reject) => {
       var response = request(url);
@@ -33,7 +34,7 @@ var downloadImage = url =>
     })
   );
 
-var dumpStreamToTmpFile = stream => 
+var dumpStreamToTmpFile = stream =>
   getTmpFilePath().then(
     path => new Promise((resolve, reject) => {
       if (!stream) return reject(`stream is ${stream}`);
@@ -42,7 +43,7 @@ var dumpStreamToTmpFile = stream =>
       stream.on('error', reject);
     })
   );
-  
+
 var imageWithOptions = (context = {}) => ({ options, url: imageUrl = '' }) => {
   var getImagePath = Promise.resolve(imageUrl);
   if (imageUrl.startsWith("$")) {
