@@ -3,6 +3,7 @@ version: '3.0'
 services:
   app:
     build: .
+    image: betalabs/node-graphicsmagick
     ports:
       - '85:80'
     volumes:
