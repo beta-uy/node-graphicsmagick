@@ -3,6 +3,7 @@ var gm = require('gm');
 var request = require('request');
 var tmp = require('tmp');
 var url = require('url');
+var QRCode = require('qrcode');
 var Promise = require('bluebird');
 
 var compact = xs => xs.filter(x => !!x);
@@ -12,7 +13,7 @@ var isUrlRemote = urlString => {
   return parsedUrl && parsedUrl.protocol && !!parsedUrl.protocol.match(/https?:/);
 }
 
-var commandifyOptions = options => 
+var commandifyOptions = options =>
   Object.entries(options || {}).reduce((acc, [k, v]) => [...acc, `-${k}`, v], []);
 
 var getTmpFilePath = () =>
@@ -23,7 +24,7 @@ var getTmpFilePath = () =>
     });
   });
 
-var downloadImage = url => 
+var downloadImage = url =>
   getTmpFilePath().then(
     path => new Promise((resolve, reject) => {
       var response = request(url);
@@ -33,7 +34,7 @@ var downloadImage = url =>
     })
   );
 
-var dumpStreamToTmpFile = stream => 
+var dumpStreamToTmpFile = stream =>
   getTmpFilePath().then(
     path => new Promise((resolve, reject) => {
       if (!stream) return reject(`stream is ${stream}`);
@@ -42,7 +43,7 @@ var dumpStreamToTmpFile = stream =>
       stream.on('error', reject);
     })
   );
-  
+
 var imageWithOptions = (context = {}) => ({ options, url: imageUrl = '' }) => {
   var getImagePath = Promise.resolve(imageUrl);
   if (imageUrl.startsWith("$")) {
@@ -112,8 +113,24 @@ var drawText = (context = {}) => (params = {}) => {
   );
 }
 
+var drawQRCode = (context = {}) => (params = {}) =>
+  getTmpFilePath().then(
+    path => new Promise((resolve, reject) => {
+      QRCode.toFile(
+        path,
+        params.text || '',
+        params.options || {},
+        error => {
+          if (error) return reject(error);
+          resolve(fs.createReadStream(path));
+        }
+      );
+    })
+  );
+
 module.exports = {
   composite,
   convert,
+  drawQRCode,
   drawText,
 };
