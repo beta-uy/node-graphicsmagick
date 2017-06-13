@@ -44,7 +44,7 @@ app.post('/gm/pipe', (req, res) => {
     Promise.resolve(context)
   ).then(
     ({ outputStream }) => {
-      res.setHeader('Content-Type', 'image');
+      res.setHeader('Content-Type', 'image/png');
       outputStream.pipe(res);
     }
   ).catch(
