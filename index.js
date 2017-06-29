@@ -60,6 +60,28 @@ app.post('/gm/pipe', (req, res) => {
   ).then(() => console.timeEnd(requestName));
 });
 
+app.get('/resize', (req, res) => {
+  var requestName = `[${req.id}] /resize "${req.body.operationName || 'Anonymous'}"`;
+  console.time(requestName);
+
+  var resizeParams = {
+    image: req.query.url,
+    width: req.query.resize_w || req.query.resize_h,
+    height: req.query.resize_h || req.query.resize_w,
+  };
+  gmUtils.resize()(resizeParams).then(
+    (outputStream) => {
+      res.setHeader('Content-Type', 'image/jpeg');
+      outputStream.pipe(res);
+    }
+  ).catch(
+    error => {
+      res.status(500);
+      res.send(error.message);
+    }
+  ).then(() => console.timeEnd(requestName));
+});
+
 app.listen(80);
 console.log("Listening on port 80");
 

@@ -94,12 +94,15 @@ var composite = (context = {}) => (params = {}) => new Promise((resolve, reject)
   );
 });
 
-var convert = (context = {}) => (params = {}) =>
-  imageWithOptions(params.image).then(
-    image => {
-      // TODO
-    }
-  );
+var resize = (context = {}) => (params = {}) =>
+  downloadImage(params.image).then(image => {
+    var { width, height } = params;
+    return Promise.resolve(
+      gm(image)
+        .resize(width, height, '^')
+        .stream('jpg')
+    );
+  });
 
 var drawText = (context = {}) => (params = {}) => {
   var options = params.options || {};
@@ -130,7 +133,7 @@ var drawQRCode = (context = {}) => (params = {}) =>
 
 module.exports = {
   composite,
-  convert,
   drawQRCode,
   drawText,
+  resize,
 };
