@@ -94,12 +94,15 @@ var composite = (context = {}) => (params = {}) => new Promise((resolve, reject)
   );
 });
 
+// jpeg-only support
 var resize = (context = {}) => (params = {}) =>
   downloadImage(params.image).then(image => {
     var { width, height } = params;
     return Promise.resolve(
       gm(image)
         .resize(width, height)
+        .background('#FFF')
+        .flatten()
         .stream('jpg')
     );
   });
