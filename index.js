@@ -66,8 +66,8 @@ app.get('/resize', (req, res) => {
 
   var resizeParams = {
     image: req.query.url,
-    width: req.query.resize_w || req.query.resize_h,
-    height: req.query.resize_h || req.query.resize_w,
+    width: req.query.resize_w,
+    height: req.query.resize_h,
   };
   gmUtils.resize()(resizeParams).then(
     (outputStream) => {

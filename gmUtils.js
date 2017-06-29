@@ -99,7 +99,7 @@ var resize = (context = {}) => (params = {}) =>
     var { width, height } = params;
     return Promise.resolve(
       gm(image)
-        .resize(width, height, '^')
+        .resize(width, height)
         .stream('jpg')
     );
   });
