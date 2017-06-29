@@ -1,0 +1,13 @@
+{
+  "imageA": {
+    "url": "/app/qr",
+    "options": { }
+  },
+  "imageB": {
+    "url": "/app/product",
+    "options": { }
+  },
+  "options": {
+    "gravity": "SouthEast"
+  }
+}

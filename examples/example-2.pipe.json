@@ -1,4 +1,5 @@
 {
+  "operationName": "media_for_profile_post",
   "pipe": [
     {
       "utility": "drawText",
@@ -27,12 +28,19 @@
       }
     },
     {
+      "utility": "drawText",
+      "ref": "$2",
+      "text": "BV",
+      "options": {
+        "fill": "#fff"
+      }
+    },
+    {
       "utility": "composite",
       "ref": "$1",
       "imageA": {
-        "url": "/app/profile.jpeg",
+        "url": "$2",
         "options": {
-          "resize": "265x265^"
         }
       },
       "imageB": {
