@@ -24,7 +24,7 @@ var getTmpFilePath = () =>
     });
   });
 
-var downloadImage = url =>
+var downloadImageToTmp = url =>
   getTmpFilePath().then(
     path => new Promise((resolve, reject) => {
       var response = request(url);
@@ -33,6 +33,8 @@ var downloadImage = url =>
       response.on('error', reject);
     })
   );
+
+var downloadImageToStream = url => Promise.resolve(request(url));
 
 var dumpStreamToTmpFile = stream =>
   getTmpFilePath().then(
@@ -49,7 +51,7 @@ var imageWithOptions = (context = {}) => ({ options, url: imageUrl = '' }) => {
   if (imageUrl.startsWith("$")) {
     getImagePath = dumpStreamToTmpFile(context[imageUrl]);
   } else if (isUrlRemote(imageUrl)) {
-    getImagePath = downloadImage(imageUrl);
+    getImagePath = downloadImageToTmp(imageUrl);
   }
   return getImagePath.then(path => compact([ ...commandifyOptions(options), path ]));
 }
@@ -96,10 +98,10 @@ var composite = (context = {}) => (params = {}) => new Promise((resolve, reject)
 
 // jpeg-only support
 var resize = (context = {}) => (params = {}) =>
-  downloadImage(params.image).then(image => {
+  downloadImageToStream(params.image).then(imageStream => {
     var { width, height } = params;
     return Promise.resolve(
-      gm(image)
+      gm(imageStream)
         .resize(width, height)
         .background('#FFF')
         .flatten()

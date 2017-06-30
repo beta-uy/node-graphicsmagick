@@ -73,13 +73,15 @@ app.get('/resize', (req, res) => {
     (outputStream) => {
       res.setHeader('Content-Type', 'image/jpeg');
       outputStream.pipe(res);
+      outputStream.on('end', () => console.timeEnd(requestName));
     }
   ).catch(
     error => {
       res.status(500);
       res.send(error.message);
+      console.timeEnd(requestName);
     }
-  ).then(() => console.timeEnd(requestName));
+  );
 });
 
 app.listen(80);
