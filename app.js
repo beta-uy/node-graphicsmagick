@@ -84,10 +84,4 @@ app.get('/resize', (req, res) => {
   );
 });
 
-app.listen(80);
-console.log("Listening on port 80");
-
-process.on('SIGTERM', function() {
-  console.log("Bye!");
-  process.exit();
-});
+module.exports = app;
