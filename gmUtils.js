@@ -1,5 +1,5 @@
 var fs = require('fs');
-var gm = require('gm');
+var gm = require('gm').subClass({ imageMagick: true });
 var request = require('request');
 var tmp = require('tmp');
 var url = require('url');
