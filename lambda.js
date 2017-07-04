@@ -1,7 +1,29 @@
-var awsServerlessExpress = require('aws-serverless-express');
-var app = require('./app');
+var gmUtils = require('./gmUtils');
 
-// via https://github.com/awslabs/aws-serverless-express/pull/37/commits/aebc6ce81407989d5af76c15324e5ba826e7d296#diff-168726dbe96b3ce427e7fedce31bb0bcR122
-var server = awsServerlessExpress.createServer(app, null, ['image/png', 'image/jpeg']);
+exports.handler = (event, context, callback) => {
+  const { url, resize_w, resize_h } = event.queryStringParameters;
+  const resizeParams = {
+    image: url,
+    width: resize_w,
+    height: resize_h,
+  };
 
-exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context)
+  gmUtils.resize()(resizeParams).
+    then(outputStream => new Promise((resolve, reject) => {
+      const buffers = [];
+      const append = b => buffers.push(b);
+      outputStream.on('data', append);
+      outputStream.on('end', () => resolve(Buffer.concat(buffers).toString('base64')));
+    })).
+    // then(body => callback(null, {
+    then(body => context.succeed({
+      isBase64Encoded: true,
+      statusCode: 200,
+      headers: { "Content-Type": "image/jpeg" },
+      body
+    })).
+    catch(error => {
+      res.status(500);
+      res.send(error.message);
+    });
+};
