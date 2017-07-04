@@ -2,6 +2,7 @@ var app = require('express')();
 var bodyParser = require('body-parser');
 var gmUtils = require('./gmUtils.js');
 var addRequestId = require('express-request-id')();
+var lengthStream = require('length-stream');
 var Promise = require('bluebird');
 
 app.use(bodyParser.json());
@@ -64,17 +65,26 @@ app.get('/resize', (req, res) => {
   var requestName = `[${req.id}] /resize "${req.body.operationName || 'Anonymous'}"`;
   console.time(requestName);
 
+  res.setHeader('Content-Type', 'image/jpeg');
+
   var resizeParams = {
     image: req.query.url,
     width: req.query.resize_w,
     height: req.query.resize_h,
   };
+
+  var earlyExitIfEmptyStream = lengthStream(length => {
+    if (length > 0) return;
+
+    console.error(`[${req.id}] Got empty stream for query: ${JSON.stringify(req.query)}`);
+    res.status(503).end();
+  });
+
   gmUtils.resize()(resizeParams).then(
-    (outputStream) => {
-      res.setHeader('Content-Type', 'image/jpeg');
-      outputStream.pipe(res);
-      outputStream.on('end', () => console.timeEnd(requestName));
-    }
+    outputStream => outputStream
+      .pipe(earlyExitIfEmptyStream)
+      .pipe(res)
+      .on('finish', () => console.timeEnd(requestName))
   ).catch(
     error => {
       res.status(500);
