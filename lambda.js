@@ -16,14 +16,11 @@ exports.handler = (event, context, callback) => {
       outputStream.on('end', () => resolve(Buffer.concat(buffers).toString('base64')));
     })).
     // then(body => callback(null, {
-    then(body => context.succeed({
+    then(body => callback(null, {
       isBase64Encoded: true,
       statusCode: 200,
       headers: { "Content-Type": "image/jpeg" },
       body
     })).
-    catch(error => {
-      res.status(500);
-      res.send(error.message);
-    });
+    catch(callback);
 };
