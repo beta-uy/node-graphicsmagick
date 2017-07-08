@@ -3,11 +3,17 @@ version: '3.0'
 services:
   app:
     image: betalabs/node-graphicsmagick
+    networks:
+      - beta-labs
+      - beta-wan
     deploy:
+      replicas: 3
       resources:
         limits:
           memory: 512MB
 
 networks:
+  beta-labs:
+    external: true
   beta-wan:
     external: true
