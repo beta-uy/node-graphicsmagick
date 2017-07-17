@@ -1,6 +1,7 @@
 var fs = require('fs');
 var gm = require('gm');
 var request = require('request');
+var sharp = require('sharp');
 var tmp = require('tmp');
 var url = require('url');
 var QRCode = require('qrcode');
@@ -100,13 +101,9 @@ var composite = (context = {}) => (params = {}) => new Promise((resolve, reject)
 var resize = (context = {}) => (params = {}) =>
   downloadImageToStream(params.image).then(imageStream => {
     var { width, height } = params;
-    return Promise.resolve(
-      gm(imageStream)
-        .resize(width, height)
-        .background('#FFF')
-        .flatten()
-        .stream('jpg')
-    );
+    var transformer = sharp()
+      .resize(width, height);
+    return imageStream.pipe(transformer);
   });
 
 var drawText = (context = {}) => (params = {}) => {

@@ -17,10 +17,10 @@
     "length-stream": "^0.1.1",
     "qrcode": "^0.8.2",
     "request": "^2.81.0",
+    "sharp": "0.16.2",
     "tmp": "^0.0.31"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
   }
 }
- 

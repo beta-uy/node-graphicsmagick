@@ -4,9 +4,9 @@ FROM mhart/alpine-node:8
 ARG PKGNAME=graphicsmagick
 ARG PKGVER=1.3.23
 ARG PKGSOURCE=http://downloads.sourceforge.net/$PKGNAME/$PKGNAME/$PKGVER/GraphicsMagick-$PKGVER.tar.lz
+# via http://sharp.dimens.io/en/stable/install/#docker
+ARG NODE_MODULES_CACHE=false
 
-# RUN apk add --update graphicsmagick --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
-#
 # Installing graphicsmagick dependencies
 RUN apk add --update g++ \
                      gcc \
@@ -20,7 +20,10 @@ RUN apk add --update g++ \
                      ca-certificates \
                      ghostscript-fonts \
                      freetype \
-                     freetype-dev && \
+                     freetype-dev \
+                     fftw-dev \
+                     libwebp && \
+    update-ca-certificates && \
     wget $PKGSOURCE && \
     lzip -d -c GraphicsMagick-$PKGVER.tar.lz | tar -xvf - && \
     cd GraphicsMagick-$PKGVER && \
@@ -42,20 +45,22 @@ RUN apk add --update g++ \
     make install && \
     cd / && \
     rm -rf GraphicsMagick-$PKGVER && \
-    rm GraphicsMagick-$PKGVER.tar.lz && \
-    apk del g++ \
-            gcc \
-            make \
-            lzip \
-            wget && \
-    update-ca-certificates && \
-    rm -rf /var/cache/apk/*
+    rm GraphicsMagick-$PKGVER.tar.lz
+
+RUN apk add vips-dev --update-cache --repository https://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
 
 RUN mkdir /app
 WORKDIR /app
 
 COPY package.json /app
 RUN yarn
+
+RUN apk del g++ \
+            gcc \
+            make \
+            lzip \
+            wget && \
+    rm -rf /var/cache/apk/*
 
 COPY . /app
 
