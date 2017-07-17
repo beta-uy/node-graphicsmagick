@@ -101,8 +101,11 @@ var composite = (context = {}) => (params = {}) => new Promise((resolve, reject)
 var resize = (context = {}) => (params = {}) =>
   downloadImageToStream(params.image).then(imageStream => {
     var { width, height } = params;
+    var parseDim = x => x != null ? parseInt(x) : x;
     var transformer = sharp()
-      .resize(width, height);
+      .resize(parseDim(width), parseDim(height))
+      .background('white')
+      .embed();
     return imageStream.pipe(transformer);
   });
 
