@@ -7,10 +7,18 @@ services:
       - beta-labs
       - beta-wan
     deploy:
-      replicas: 3
+      replicas: 6
       resources:
         limits:
           memory: 512MB
+      labels:
+      - com.df.certName=img-processor.svc.beta.uy.pem
+      - com.df.distribute=true
+      - com.df.notify=true
+      - com.df.port=80
+      - com.df.serviceDomain=img-processor.svc.beta.uy
+      - com.docker.stack.image=betalabs/node-graphicsmagick
+      - com.docker.stack.namespace=img-processor
 
 networks:
   beta-labs:
