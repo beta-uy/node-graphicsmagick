@@ -1,7 +1,7 @@
 version: '3.0'
 
 services:
-  app:
+  img-processor:
     image: betalabs/node-graphicsmagick
     networks:
       - beta-labs
